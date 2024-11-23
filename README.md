@@ -41,3 +41,16 @@ On Windows (maybe I'll get around to Mac and Linux someday.)
    * Program is "pythonw" (this keeps it from showing the console window)
    * Arguments are everything else in the command line
    * You'll need to give a full path to the memento_mori.py file
+
+
+# Making the .ico file
+
+I used ImageMagick to make the .ico file with many resolutions.
+There were some problems related to paths, so I'm recording what
+I did here.
+```cmd
+scoop install imagemagick
+set MAGICK_CODER_MODULE_PATH=C:\path\to\imagemagick\modules\coders
+cd c:\path\to\imagemagick
+magick.exe path\to\MementoMori.icon.png -background transparent -define icon:auto-resize="16,24,32,48,64,256" path\to\MementoMori.icon.ico
+```
