@@ -415,6 +415,13 @@ def parse_arguments() -> tuple[datetime, Sex, Gender, LifeExpectancyAdjustments]
 
 
 def main() -> None:
+    # Set app ID for Windows - enables changing the Window icon
+    # to change the taskbar icon
+    if sys.platform == 'win32':
+        import ctypes
+        win_app_id = 'radix_seven.memento_mori.v1.0'  # arbitrary string
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(win_app_id)
+
     log_dir = APP_DIR / 'logs'
     log_dir.mkdir(exist_ok=True)
     log_filename = log_dir / f'memento_mori.{datetime.now():%Y-%m-%d_%H-%M-%S}.log'
