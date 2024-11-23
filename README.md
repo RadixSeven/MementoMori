@@ -30,4 +30,14 @@ python memento_mori.py 2001-09-11 --sex female --gender non-binary --long-term-p
 -religious --high-income --adhd --autism --left-handed
 ```
 
+# Running on startup
 
+On Windows (maybe I'll get around to Mac and Linux someday.)
+
+1. Start Windows Task Scheduler (Win+R then type "taskschd.msc")
+2. Click "Create Basic Task" in the far right listbox titled "Actions"
+3. Choose the options you want (e.g., Run when I log on)
+4. After you've chosen "Start a Program",
+   * Program is "pythonw" (this keeps it from showing the console window)
+   * Arguments are everything else in the command line
+   * You'll need to give a full path to the memento_mori.py file
