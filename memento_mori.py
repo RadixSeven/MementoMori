@@ -1,6 +1,7 @@
 """
 Memento Mori counter with many demographic adjustments.
 """
+import logging
 import sys
 from datetime import datetime, timedelta
 import tkinter as tk
@@ -9,7 +10,10 @@ import time
 import argparse
 from dataclasses import dataclass
 from enum import Enum, auto
+from pathlib import Path
 from typing import Optional
+
+APP_DIR = Path(__file__).absolute().parent
 
 
 class Sex(Enum):
@@ -179,11 +183,28 @@ class MementoMoriCounter:
         self.root.title("Memento Mori")
 
         # Set window properties
-        self.root.attributes('-topmost', True)  # Keep window on top
-        self.root.geometry("300x150")  # Set window size
+        self.root.attributes('-topmost', True)
+        self.root.geometry("300x150")
+
+        # Set the window icon
+        try:
+            # Try .ico file first (works on Windows)
+            ico_path = APP_DIR / 'MementoMori.icon.ico'
+            self.root.iconbitmap(str(ico_path))
+        except Exception as e:
+            logging.warning("Could not set icon using an ico file: %s", e)
+            # Attempt alternate method using icon image (looks bad on Windows)
+            try:
+                ico_path = APP_DIR / 'MementoMori.icon.png'
+                icon = tk.PhotoImage(file=ico_path)
+                self.root.iconphoto(True, icon)
+                # Keep a reference to prevent garbage collection
+                self.icon = icon
+            except Exception as e2:
+                logging.warning(f"Could not set custom window icon: %s", e2)
 
         # Create labels
-        self.days_label: tk.Label = tk.Label(
+        self.days_label = tk.Label(
             self.root,
             text="",
             font=("Helvetica", 24),
@@ -191,7 +212,7 @@ class MementoMoriCounter:
         )
         self.days_label.pack(pady=20)
 
-        self.update_label: tk.Label = tk.Label(
+        self.update_label = tk.Label(
             self.root,
             text="",
             font=("Helvetica", 10),
@@ -200,8 +221,8 @@ class MementoMoriCounter:
         self.update_label.pack(pady=10)
 
         # Start update thread
-        self.running: bool = True
-        self.update_thread: threading.Thread = threading.Thread(target=self.update_time)
+        self.running = True
+        self.update_thread = threading.Thread(target=self.update_time)
         self.update_thread.daemon = True
         self.update_thread.start()
 
@@ -393,6 +414,13 @@ def parse_arguments() -> tuple[datetime, Sex, Gender, LifeExpectancyAdjustments]
     return birth_date, sex, gender, adjustments
 
 
-if __name__ == "__main__":
+def main() -> None:
+    log_dir = APP_DIR / 'logs'
+    log_dir.mkdir(exist_ok=True)
+    log_filename = log_dir / f'memento_mori.{datetime.now():%Y-%m-%d_%H-%M-%S}.log'
+    logging.basicConfig(level=logging.DEBUG, filename=log_filename, filemode='w')
     app = MementoMoriCounter(*parse_arguments())
     app.run()
+
+if __name__ == "__main__":
+    main()
